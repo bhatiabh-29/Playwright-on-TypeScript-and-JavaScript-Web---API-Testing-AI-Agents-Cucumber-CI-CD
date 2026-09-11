@@ -1,0 +1,14 @@
+{
+  "name": "playwrightautomation",
+  "version": "1.0.0",
+  "description": "playwright automation course from udemy ",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {},
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.5.0"
+  }
+}
