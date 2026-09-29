@@ -35,29 +35,51 @@ test("Register User", async ({ page }) => {
   await page.pause();
 });
 
-test('Login with new user', async({page}) =>{
+test("Login with new user", async ({ page }) => {
+  const products = page.locator(".card-body");
+  const productName = "iphone 13 pro";
 
-    const products = page.locator(".card-body");
-    const productName = 'iphone 13 pro';
-    
-    await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
-    await page.locator('#userEmail').fill("whoami@gmail.com");
-    await page.locator('#userPassword').fill('Test@123456');
-    await page.locator('#login').click();
+  await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
+  await page.locator("#userEmail").fill("whoami@gmail.com");
+  await page.locator("#userPassword").fill("Test@123456");
+  await page.locator("#login").click();
 
-    //wait for the page to load completely
-    await page.waitForLoadState('networkidle');
+  //wait for the page to load completely
+  await page.waitForLoadState("networkidle");
 
-    const count = await products.count();
-    for(let i=0; i<=count; ++i){
-      if (await products.nth(i).locator("b").textContent() === productName)
-      {
-        await products.nth(i).locator('text=" Add To Cart"').click();
-        break;
-      }
-
+  const count = await products.count();
+  for (let i = 0; i < count; ++i) {
+    if ((await products.nth(i).locator("b").textContent()) === productName) {
+      await products.nth(i).locator('text=" Add To Cart"').click();
+      break;
     }
-    await page.pause();
-    
-    
+  }
+  await page.pause();
+});
+
+test.only("Add to cart amazon", async ({ page }) => {
+  const products = page.locator(
+    '[data-component-type="s-search-result"]',
+  );
+  const productName = "AirPods Pro";
+
+  await page.goto(
+    "https://www.amazon.com/s?k=apple&crid=3AXZSGYZCM23U&sprefix=apple%2Caps%2C284&ref=nb_sb_noss_1",
+  );
+  await page.waitForLoadState("domcontentloaded");
+
+  const counts = await products.count();
+  for (let i = 0; i < counts; i++) {
+    const product = products.nth(i);
+    const title = product.locator("h2 span");
+    if ((await title.count()) > 0 && (await title.first().innerText()).includes(productName)) {
+      const addToCart = product.getByRole("button", { name: /add to cart/i });
+      if ((await addToCart.count()) > 0) {
+        await addToCart.first().click();
+      }
+      break;
+    }
+  }
+
+  await page.pause();
 });
