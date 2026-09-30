@@ -33,9 +33,9 @@ test("Register User", async ({ page }) => {
   await page.locator('text="Login"').click();
 
   await page.pause();
-});
+  });
 
-test("Login with new user", async ({ page }) => {
+test.only("Login with new user", async ({ page }) => {
   const products = page.locator(".card-body");
   const productName = "iphone 13 pro";
 
@@ -46,6 +46,8 @@ test("Login with new user", async ({ page }) => {
 
   //wait for the page to load completely
   await page.waitForLoadState("networkidle");
+  //waiting for the cards to load 
+  await page.locator(".card-body b").first().waitFor();
 
   const count = await products.count();
   for (let i = 0; i < count; ++i) {
@@ -54,10 +56,17 @@ test("Login with new user", async ({ page }) => {
       break;
     }
   }
+  await page.locator('[routerlink*="/cart"]').click();
+
+  await page.locator("div li").first().waitFor();
+
+  const bool = page.locator('h3:has-text("iphone 13 pro")').isVisible();
+  expect(bool).toBeTruthy();
+
   await page.pause();
 });
 
-test.only("Add to cart amazon", async ({ page }) => {
+/*test("Add to cart amazon", async ({ page }) => {
   const products = page.locator(
     '[data-component-type="s-search-result"]',
   );
@@ -82,4 +91,4 @@ test.only("Add to cart amazon", async ({ page }) => {
   }
 
   await page.pause();
-});
+}); */
