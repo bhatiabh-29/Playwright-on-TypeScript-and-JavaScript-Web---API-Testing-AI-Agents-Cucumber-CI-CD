@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { text } from "node:stream/consumers";
 
 test("Register User", async ({ page }) => {
   const userEmail = page.locator("#userEmail");
@@ -33,11 +34,16 @@ test("Register User", async ({ page }) => {
   await page.locator('text="Login"').click();
 
   await page.pause();
-  });
+});
 
 test.only("Login with new user", async ({ page }) => {
   const products = page.locator(".card-body");
   const productName = "iphone 13 pro";
+  const cvvCode = page.locator('.field.small:has-text("CVV Code") input');
+  const nameOnCard = page.locator('div.row:has-text("Name on Card ") input');
+  const ccNum = page.locator("div.row:has-text('Credit Card Number ') input");
+  const exDate = page.locator("select.input.ddl");
+  const options = page.locator(".ta-results");
 
   await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
   await page.locator("#userEmail").fill("whoami@gmail.com");
@@ -46,7 +52,7 @@ test.only("Login with new user", async ({ page }) => {
 
   //wait for the page to load completely
   await page.waitForLoadState("networkidle");
-  //waiting for the cards to load 
+  //waiting for the cards to load
   await page.locator(".card-body b").first().waitFor();
 
   const count = await products.count();
@@ -62,6 +68,36 @@ test.only("Login with new user", async ({ page }) => {
 
   const bool = page.locator('h3:has-text("iphone 13 pro")').isVisible();
   expect(bool).toBeTruthy();
+
+  await page.locator("text=Checkout").click();
+
+  await ccNum.nth(0).clear();
+  await ccNum.nth(0).fill('0000 0000 0000 0000');
+
+  await exDate.first().selectOption('05');
+  await expect(exDate.first()).toHaveValue('05');
+  await exDate.last().selectOption('31');
+  await expect(exDate.last()).toHaveValue('31');
+
+  await cvvCode.fill("123");
+  await expect(cvvCode).toHaveValue("123");
+
+  await nameOnCard.nth(2).fill('test');
+  await expect((nameOnCard).nth(2)).toHaveValue('test');
+
+  await page.locator("[placeholder='Select Country']").pressSequentially('ind', {delay: 100} );
+  await options.waitFor();
+  const optionCount = await options.locator("button").count();
+  for (let i=0; i <=optionCount; i++){
+    const text = await (options.locator("button").nth(i).textContent());
+    if (text === ' India' ){
+      await options.locator("button").nth(i).click();
+      break;
+    }
+  }
+  
+
+
 
   await page.pause();
 });
