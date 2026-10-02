@@ -72,34 +72,68 @@ test.only("Login with new user", async ({ page }) => {
   await page.locator("text=Checkout").click();
 
   await ccNum.nth(0).clear();
-  await ccNum.nth(0).fill('0000 0000 0000 0000');
+  await ccNum.nth(0).fill("0000 0000 0000 0000");
 
-  await exDate.first().selectOption('05');
-  await expect(exDate.first()).toHaveValue('05');
-  await exDate.last().selectOption('31');
-  await expect(exDate.last()).toHaveValue('31');
+  await exDate.first().selectOption("05");
+  await expect(exDate.first()).toHaveValue("05");
+  await exDate.last().selectOption("31");
+  await expect(exDate.last()).toHaveValue("31");
 
   await cvvCode.fill("123");
   await expect(cvvCode).toHaveValue("123");
 
-  await nameOnCard.nth(2).fill('test');
-  await expect((nameOnCard).nth(2)).toHaveValue('test');
+  await nameOnCard.nth(2).fill("test");
+  await expect(nameOnCard.nth(2)).toHaveValue("test");
 
-  await page.locator("[placeholder='Select Country']").pressSequentially('ind', {delay: 100} );
+  await page
+    .locator("[placeholder='Select Country']")
+    .pressSequentially("ind", { delay: 100 });
   await options.waitFor();
   const optionCount = await options.locator("button").count();
-  for (let i=0; i <=optionCount; i++){
-    const text = await (options.locator("button").nth(i).textContent());
-    if (text === ' India' ){
+  for (let i = 0; i <= optionCount; i++) {
+    const text = await options.locator("button").nth(i).textContent();
+    if (text === " India") {
       await options.locator("button").nth(i).click();
       break;
     }
   }
-  
+
+  await expect(page.locator(".user__name [type='text']").first()).toHaveText(
+    "whoami@gmail.com",
+  );
+  await page.locator(".action__submit").click();
+
+  await expect(page.locator(".hero-primary")).toHaveText(
+    " Thankyou for the order. ",
+  );
+  const orderId = (
+    await page.locator(".em-spacer-1 .ng-star-inserted").textContent()
+  )
+    .trim()
+    .replace(/\|/g, "")
+    .trim();
+  console.log(orderId);
+
+  await page.locator('.em-spacer-1 [routerlink="/dashboard/myorders"]').click();
+
+  await page.locator("tbody").waitFor();
+
+  const rows = page.locator("tbody tr");
+ 
+  for (let i = 0; i < await rows.count(); i++) {
+    
+    const rowOrderId = await rows.nth(i).locator("th").textContent();
+    if (orderId.includes(rowOrderId))
+    {
+      await rows.nth(i).locator("button").first().click();
+      break;
+    }
+  }
+
+  const orderIdDetails = await page.locator(".col-text").textContent();
+  expect(orderId.includes(orderIdDetails)).toBeTruthy();
 
 
-
-  await page.pause();
 });
 
 /*test("Add to cart amazon", async ({ page }) => {
