@@ -36,7 +36,7 @@ test("Register User", async ({ page }) => {
   await page.pause();
 });
 
-test.only("Login with new user", async ({ page }) => {
+test("Login with new user", async ({ page }) => {
   const products = page.locator(".card-body");
   const productName = "iphone 13 pro";
   const cvvCode = page.locator('.field.small:has-text("CVV Code") input');
@@ -119,12 +119,10 @@ test.only("Login with new user", async ({ page }) => {
   await page.locator("tbody").waitFor();
 
   const rows = page.locator("tbody tr");
- 
-  for (let i = 0; i < await rows.count(); i++) {
-    
+
+  for (let i = 0; i < (await rows.count()); i++) {
     const rowOrderId = await rows.nth(i).locator("th").textContent();
-    if (orderId.includes(rowOrderId))
-    {
+    if (orderId.includes(rowOrderId)) {
       await rows.nth(i).locator("button").first().click();
       break;
     }
@@ -132,8 +130,6 @@ test.only("Login with new user", async ({ page }) => {
 
   const orderIdDetails = await page.locator(".col-text").textContent();
   expect(orderId.includes(orderIdDetails)).toBeTruthy();
-
-
 });
 
 /*test("Add to cart amazon", async ({ page }) => {
