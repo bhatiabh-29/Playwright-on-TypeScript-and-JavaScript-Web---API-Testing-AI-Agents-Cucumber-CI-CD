@@ -30,10 +30,18 @@ test ('Timeouts class level', async({page}) =>{
     test.timeout({timeout: 60000});
     //!override and increase the time by overriding it in Timeout -- class level
     const slowExpect = expect.configure({timeout: 10000});
+    
+    
+    
+    
     await page.goto("https://rahulshettyacademy.com/angularpractice/");
+
     
     await page.locator(".form-group input[name='name']").first().fill('test');
     await page.locator(".form-group input[name='email']").fill('test');
+
+
+
     await page.getByPlaceholder('Password').fill('test123')
     await page.getByLabel("Check me out if you Love IceCreams!").click();
     await page.getByLabel("Gender").selectOption("Female");
