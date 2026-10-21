@@ -20,6 +20,7 @@ export default defineConfig({
   expect:{
     timeout: 10000
   },
+  
 
 
   //* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -35,7 +36,14 @@ export default defineConfig({
     navigationTimeout: 30 * 1000,
 
     //* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
+
+    //* collect screenshot shots for every action that it performed *//
+    screenshot: 'on',
+
+    
+
+
   },
 
 });
