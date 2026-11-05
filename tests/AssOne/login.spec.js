@@ -129,7 +129,7 @@ await expect(matchingCard).toBeVisible();
 
 
 
-await page.pause();
+
 
   
 });
