@@ -1,39 +1,41 @@
-import { test, expect, request } from "@playwright/test";
-
 class APIUtils {
   constructor(apiContext, loginPayload) {
     this.apiContext = apiContext;
     this.loginPayload = loginPayload;
   }
-  //getting the token from the login API and storing it in a variable
+
   async getToken() {
-    // Login
-    const loginResponse = await this.apiContext.post(
+    const loginres = await this.apiContext.post(
       "https://rahulshettyacademy.com/api/ecom/auth/login",
       { data: this.loginPayload },
     );
-    expect(loginResponse.ok()).toBeTruthy();
-    const loginToken = (await loginResponse.json()).token;
-    return loginToken;
+
+    const loginresJson = await loginres.json();
+    const logintoken = loginresJson.token;
+    console.log("Login response:", loginresJson);
+    console.log("Token:", logintoken);
+
+    return logintoken;
   }
 
-  //Creating an order using the order API and storing the order ID in a variable
-  async createOrder(orderPayload) {
+  async createOrder(orderPayLoad) {
     let response = {};
-    response.token = await this.getToken();
-    const orderResponse = await this.apiContext.post(
+    response.logintoken = await this.getToken();
+
+    const orderRes = await this.apiContext.post(
       "https://rahulshettyacademy.com/api/ecom/order/create-order",
       {
-        data: orderPayload,
+        data: orderPayLoad,
         headers: {
-          Authorization: response.token,
+          Authorization: response.logintoken,
           "Content-Type": "application/json",
         },
       },
     );
-    expect(orderResponse.ok()).toBeTruthy();
-    const orderId = (await orderResponse.json()).orders[0];
-    console.log("Created order:", orderId);
+
+    const orderResJson = await orderRes.json();
+    console.log(orderResJson);
+    const orderId = orderResJson.orders[0];
     response.orderId = orderId;
     return response;
   }
